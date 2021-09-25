@@ -36,3 +36,7 @@ elif lista_de_medalhas_suecia > lista_de_medalhas_noruega and lista_de_medalhas_
     print(f"Suécia teve mais conquistas de ouro, com {lista_de_medalhas_suecia} medalhas no quadro total")
 else:
     print(f"Dinamarca teve mais conquistas de ouro, com {lista_de_medalhas_dinamarca} medalhas no quadro total")
+
+# for i in paises:
+#     for j in filtro_dos_esportes:
+#         todas_medalhas_dos_paises = url[(url['NOC'] == i) & (url[(url['NOC'] == j)])]
