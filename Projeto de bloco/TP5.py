@@ -22,7 +22,7 @@ def mostra_info_cpu():
   mostra_texto(s1, "Processador info:", "processador", 110)
   mostra_texto(s1, "Disco info:", "disco", 130)
   mostra_texto(s1, "Memória total: ", "memoria", 150)
-#   mostra_texto(s1, "Rede: ", "rede", 170)
+  mostra_texto(s1, "Rede: ", "rede", 170)
   tela.blit(s1, (0, 0))
 
 def diretorio():
@@ -66,7 +66,7 @@ def mostra_texto(s1, nome, chave, pos_y):
   elif chave == "memoria":
           s = str(round(psutil.virtual_memory().total/(1024*1024*1024), 2)) + "GB"
   elif chave == "rede":
-          s = str(psutil.net_if_addrs()['Ethernet'][0].address)
+          s = str(psutil.net_if_addrs()['Ethernet0'][0].address)
   else:
           s = str(info_cpu[chave])
 
