@@ -9,8 +9,6 @@ import time
 import sched
 import time
 
-# ip: 192.168.81.128
-
 def obter_hostnames(host_validos):
   nm = nmap.PortScanner()
   for i in host_validos:
@@ -30,13 +28,13 @@ def obter_hostnames(host_validos):
           pass
 
 def retorna_codigo_ping(hostname):
-  """Usa o utilitario ping do sistema operacional para encontrar   o host. ('-c 5') indica, em sistemas linux, que deve mandar 5   pacotes. ('-W 3') indica, em sistemas linux, que deve esperar 3   milisegundos por uma resposta. Esta funcao retorna o codigo de   resposta do ping """
+  """Usa o utilitario ping do sistema operacional para encontrar o host. ('-c 5') indica, em sistemas linux, que deve mandar 5 pacotes. ('-W 3') indica, em sistemas linux, que deve esperar 3 milisegundos por uma resposta. Esta funcao retorna o codigo de resposta do ping """
 
   plataforma = platform.system()
   args = []
+
   if plataforma == "Windows":
       args = ["ping", "-n", "1", "-l", "1", "-w", "100", hostname]
-
   else:
       args = ['ping', '-c', '1', '-W', '1', hostname]
     
@@ -48,12 +46,12 @@ def verifica_hosts(base_ip):
   print("Mapeando\r")
   host_validos = []
   return_codes = dict()
+
   for i in range(1, 255):
-    
-      return_codes[base_ip + '{0}'.format(i)] =   retorna_codigo_ping(base_ip + '{0}'.format(i))
+      return_codes[base_ip + '{0}'.format(i)] = retorna_codigo_ping(base_ip + '{0}'.format(i))
       if i %20 ==0:
           print(".", end = "")
-      if        return_codes[base_ip + '{0}'.format(i)] == 0:
+      if return_codes[base_ip + '{0}'.format(i)] == 0:
           host_validos.append(base_ip + '{0}'.format(i))
   print("\nMapping ready...")
 
@@ -205,10 +203,6 @@ while not terminou:
 
     mostra_info_cpu()
     mostra_uso_cpu(s1,psutil.cpu_percent(interval=1, percpu=True))
-
-    
-
-    
 
     cont = 0
 
