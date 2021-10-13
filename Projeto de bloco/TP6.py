@@ -87,7 +87,7 @@ def mostra_info_cpu():
   mostra_texto(s1, "Rede: ", "rede", 170)
   tela.blit(s1, (0, 0))
 
-def diretorio():
+def arquivos():
         lista = os.listdir()
         dic = {}  
         for i in lista:  
@@ -106,11 +106,29 @@ def diretorio():
                 tamanho = '{:10}'.format(str('{:.2f}'.format(kb) + ' KB'))
                 print(tamanho, time.ctime(dic[i][2]), " ", time.ctime(dic[i][1]), " ", i)
 
+def diretorio():
+  pasta_atual = os.listdir()
+
+  lista_diretorios = []
+  lista_arquivos = []
+
+  for item in pasta_atual:
+      if os.path.isfile(item):
+          lista_arquivos.append(item)
+      else:
+          if item not in [".git", ".vscode"]:        
+              lista_diretorios.append(item)
+  print("LISTA DE DIRETÓRIOS")
+  print(*lista_diretorios, sep=" \n")
+  print("LISTA DE ARQUIVOS")
+  print(*lista_arquivos, sep=" \n")
+
 def notepad():
         for i in range(2, 1, -1):
                 print ('%s %0.2f %0.2f' % (time.ctime(), time.time(), time.process_time()))
                 print ('Dormindo', i, ' segs')
                 pid = subprocess.Popen("notepad.exe").pid
+                print(psutil.Process(pid))
                 time.sleep(i)
 
 def mostra_texto(s1, nome, chave, pos_y):
@@ -175,7 +193,7 @@ cont = 60
 
 def print_event(name):
     print ('EVENTO:', time.ctime(), name)
-    diretorio()
+    arquivos()
 
 def print_event2(name):
     print ('EVENTO:', time.ctime(), name)
@@ -192,6 +210,8 @@ def execucao_evento():
 execucao_evento()
 
 execucao_ip()
+
+diretorio()
 
 terminou = False
 while not terminou:
