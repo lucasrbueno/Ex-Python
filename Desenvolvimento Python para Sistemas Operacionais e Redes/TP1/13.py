@@ -1,4 +1,3 @@
 import subprocess
 
-processo = subprocess.Popen("notepad")
-print("PID: ", processo.pid)
+print("PID: ", subprocess.Popen("notepad").pid)

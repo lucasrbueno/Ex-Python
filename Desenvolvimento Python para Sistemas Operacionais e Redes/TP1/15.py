@@ -1,7 +1,5 @@
 import psutil, time
 
-print("Listagem dos PIDs no computador: ", psutil.pids())
-
 pid_processo = int(input("Obter informações de PID específico: "))
 
 if psutil.pid_exists(pid_processo):

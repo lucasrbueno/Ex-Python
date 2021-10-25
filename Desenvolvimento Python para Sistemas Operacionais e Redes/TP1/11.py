@@ -1,6 +1,5 @@
 import os
 
 input_arquivo = input("Qual arquivo de texto quer abrir? ")
-arquivo = "notepad.exe " + input_arquivo
 
-os.system(arquivo)
+os.system("notepad.exe " + input_arquivo)
