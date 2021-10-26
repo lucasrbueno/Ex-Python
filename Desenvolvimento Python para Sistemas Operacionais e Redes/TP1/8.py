@@ -1,16 +1,16 @@
 import os
 
-list = os.listdir()
+lista = os.listdir()
 arquivos = {}
 
-for i in list:
-    if os.path.isfile(i):
-        caminho = os.path.splitext(i)[1]
+for item in lista:
+    if os.path.isfile(item):
+        caminho = os.path.splitext(item)[1]
         if not caminho in arquivos:
             arquivos[caminho] = []
-        arquivos[caminho].append(i)
+        arquivos[caminho].append(item)
 
-for i in arquivos:
-    for j in arquivos[i]:
+for item in arquivos:
+    for j in arquivos[item]:
         status = os.stat(j)
         print(f"Nome do arquivo:  {j}, tamanho: {status.st_size}")
