@@ -2,7 +2,7 @@ import socket
 PORTA = 9001
 
 from random import randint
-from CONSTANTS import PORTA, MENSAGEM_NUMERO, MENSAGEM_COR
+# from CONSTANTS import PORTA, MENSAGEM_NUMERO, MENSAGEM_COR
 
 def gera_cor_aleatoria(addr):
     id = addr[1]
@@ -11,10 +11,7 @@ def gera_cor_aleatoria(addr):
     else:
         return f"({0}, {0}, {randint(0,255)})" #azul
 
-
-# Cria o socket
 socket_servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 
 socket_servidor.bind(("192.168.81.128", PORTA))
 

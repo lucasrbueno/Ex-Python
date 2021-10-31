@@ -81,17 +81,17 @@ def diretorio():
   print(*lista_arquivos, sep=" \n")
 
 def mostra_informacoes():
-    print("Frequência (MHz): " + str(round(psutil.cpu_freq().current, 2)))
-    print("Núcleos (físicos): " + str(psutil.cpu_count()), str(" (" + str(psutil.cpu_count(logical=False)) + ")"))
-    print("Processador info: " + str(platform.processor()) + " | " + str(platform.node() + " | " + platform.platform() + " | " + platform.system()))
-    print( "Disco info, Total: " + str(round(disco.total/(1024*1024*1024), 2)) + "GB ,     " 
-    + "Usado: " + str(round(disco.used/(1024*1024*1024), 2)) + "GB ,       " 
-    + "Livre: " + str(round(disco.free/(1024*1024*1024), 2)) + "GB" + ",       " 
-    + "Percentual usado: " + str(disco.percent) + "%")
-    print("Memória total: " + str(round(psutil.virtual_memory().total/(1024*1024*1024), 2)) + "GB")
-    print("Rede: " + str(psutil.net_if_addrs()['Ethernet0'][0].address))
-    print("Uso da CPU: " + str(psutil.cpu_percent(interval=1, percpu=True)))
-    print("Informações gerais : " + str(info_cpu))
+    msg = ("Informações do computador: " "Frequência (MHz): " + str(round(psutil.cpu_freq().current, 2)) 
+        + "\nNúcleos (físicos): " + str(psutil.cpu_count()) + " (" + str(psutil.cpu_count(logical=False)) + ")" 
+        + "\nProcessador info: " + str(platform.processor()) + " | " + str(platform.node() + " | " + platform.platform() + " | " + platform.system()) 
+        + "\nDisco info, Total: " + str(round(disco.total/(1024*1024*1024), 2)) + "GB ,     " 
+        + "Usado: " + str(round(disco.used/(1024*1024*1024), 2)) + "GB ,       " 
+        + "Livre: " + str(round(disco.free/(1024*1024*1024), 2)) + "GB" + ",       " 
+        + "Percentual usado: " + str(disco.percent) + "%" 
+        + "\nMemória total: " + str(round(psutil.virtual_memory().total/(1024*1024*1024), 2)) + "GB"
+        + "\nUso da CPU: " + str(psutil.cpu_percent(interval=1, percpu=True))
+        + "\nRede: " + str(psutil.net_if_addrs()['Ethernet0'][0].address))
+    return msg
 
 def processos():
   for i in psutil.pids():
@@ -124,12 +124,14 @@ while True:
         print("Fechando conexao com", str(addr), "...")
         socket_cliente.close()
         break
-    elif '?' in msg.decode('utf-8'): 
-        # resp = random.randint(0,1) 
-        # msg = "Sim\n"
-        # if resp == 0: 
-        #     msg = "Não\n"
-        msg = str(diretorio()) + "\n\n\n" + str(mostra_informacoes()) + "\n\n\n" + str(processos())  + "\n\n\n" + str(interfaces())
+    elif 'Informacoes pc?' in msg.decode('utf-8'): 
+        msg = mostra_informacoes()
+        print(msg)
+        # + print("Informações gerais : " + str(info_cpu))
+        # + "\n\n" + str(diretorio()) + "\n\n\n" + str(mostra_informacoes()) + "\n\n\n" + str(processos())  + "\n\n\n" + str(interfaces())
+    elif 'Informacoes diretorios?' in msg.decode('utf-8'): 
+        msg = mostra_informacoes()
+        print(msg)
     else:
         msg = "Ok... " + msg.decode('utf-8') 
     socket_cliente.send(msg.encode('utf-8'))
