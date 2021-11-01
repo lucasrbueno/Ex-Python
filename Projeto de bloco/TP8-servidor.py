@@ -11,6 +11,41 @@ import socket
 socket_servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 disco = psutil.disk_usage('.')
 info_cpu = cpuinfo.get_cpu_info()
+scheduler = sched.scheduler(time.time, time.sleep)
+
+def print_event(name):
+    print ('EVENTO:', time.ctime(), name)
+
+def print_event2(name):
+    print ('EVENTO:', time.ctime(), name)
+
+def execucao_evento():
+    print("----------------------------------------------------")
+    print ('INICIO:', time.ctime())
+    scheduler.enter(2, 1, print_event, ('primeira chamada',))
+    scheduler.enter(8, 1, print_event2, ('segunda chamada',))
+    print ('CHAMADAS ESCALONADAS DA FUNÇÃO:', time.ctime())
+    print("----------------------------------------------------")
+
+def obtem_nome_familia(familia):
+  if familia == socket.AF_INET:
+      return("IPv4")
+  elif familia == socket.AF_INET6:
+      return("IPv6")
+  elif familia == socket.AF_UNIX:
+      return("Unix")
+  else:
+      return("-")
+
+def obtem_tipo_socket(tipo):
+  if tipo == socket.SOCK_STREAM:
+    return("TCP")
+  elif tipo == socket.SOCK_DGRAM:
+    return("UDP")
+  elif tipo == socket.SOCK_RAW:
+    return("IP")
+  else:
+    return("-")
 
 def interfaces():
     interfaces = psutil.net_if_addrs()
@@ -42,26 +77,6 @@ def interfaces():
         for j in nomes:
             print(j)
             print("\t"+str(io_status[j]))
-
-def obtem_nome_familia(familia):
-  if familia == socket.AF_INET:
-      return("IPv4")
-  elif familia == socket.AF_INET6:
-      return("IPv6")
-  elif familia == socket.AF_UNIX:
-      return("Unix")
-  else:
-      return("-")
-
-def obtem_tipo_socket(tipo):
-  if tipo == socket.SOCK_STREAM:
-    return("TCP")
-  elif tipo == socket.SOCK_DGRAM:
-    return("UDP")
-  elif tipo == socket.SOCK_RAW:
-    return("IP")
-  else:
-    return("-")
 
 def diretorio():
     pasta_atual = os.listdir()
@@ -96,19 +111,7 @@ def mostra_informacoes():
     return msg
 
 def processos():
-    for i in psutil.pids():
-        p = psutil.Process(i)
-        conn = p.connections()
-        if len(conn) > 0:
-            if conn[0].status.ljust(13) != "ESTABLISHED  ":
-                endl = conn[0].laddr.ip.ljust(11)
-                portl = str(conn[0].laddr.port).ljust(5)
-                endr = conn[0].laddr.ip.ljust(13)
-                portr = str(conn[0].laddr.port).ljust(5)
-                exemplo = str(i).ljust(5)," End.  Tipo   Status        Endereço    Local   Porta L.        Endereço Remoto  Porta R."
-                exemplo2 = "      ", str(obtem_nome_familia(conn[0].family)), " " + str(obtem_tipo_socket(conn[0].type)), "   " + str(conn[0].status.ljust(13)), str(endl) , str(portl), "  " + str(endr), "  " + str(portr)
-
-    return exemplo, exemplo2
+    return [proc.info for proc in psutil.process_iter(attrs=['pid', 'name', 'memory_percent'])]
 
 host = socket.gethostname()
 porta = 9999
@@ -122,7 +125,7 @@ print("Servidor de nome", host, "esperando conexão na porta", porta)
 print("Conectado a:", str(addr))
 
 while True:
-    msg = socket_cliente.recv(1024)
+    msg = socket_cliente.recv(15360)
 
     if '$' == msg.decode('utf-8'): 
         print("Fechando conexao com", str(addr), "...")
@@ -137,7 +140,7 @@ while True:
         msg = diretorio()
         print(msg)
     elif 'Informacoes processos?' in msg.decode('utf-8'): 
-        msg = processos()
+        msg = str(processos())
         print(msg)
     elif 'Informacoes rede?' in msg.decode('utf-8'): 
         msg = interfaces()
@@ -145,6 +148,7 @@ while True:
     else:
         msg = "O que quer dizer com isso? ---> " + msg.decode('utf-8') 
     socket_cliente.send(msg.encode('utf-8'))
-    
+
+scheduler.run()    
 socket_servidor.close()
 input("Pressione qualquer tecla para sair...") 
