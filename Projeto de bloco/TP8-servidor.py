@@ -64,21 +64,23 @@ def obtem_tipo_socket(tipo):
     return("-")
 
 def diretorio():
-  pasta_atual = os.listdir()
+    pasta_atual = os.listdir()
 
-  lista_diretorios = []
-  lista_arquivos = []
+    lista_diretorios = []
+    lista_arquivos = []
 
-  for item in pasta_atual:
-      if os.path.isfile(item):
-          lista_arquivos.append(item)
-      else:
-          if item not in [".git", ".vscode"]:        
-              lista_diretorios.append(item)
-  print("LISTA DE DIRETÓRIOS")
-  print(*lista_diretorios, sep=" \n")
-  print("LISTA DE ARQUIVOS")
-  print(*lista_arquivos, sep=" \n")
+    for item in pasta_atual:
+        if os.path.isfile(item):
+            lista_arquivos.append(item)
+        else:
+            if item not in [".git", ".vscode"]:        
+                lista_diretorios.append(item)
+
+    msg = ("LISTA DE DIRETÓRIOS\n", str(*lista_diretorios))
+    # print(*lista_diretorios, sep=" \n")
+    msg2 = ("LISTA DE ARQUIVOS\n", str(*lista_arquivos))
+    # print(*lista_arquivos, sep=" \n")
+    return msg, msg2
 
 def mostra_informacoes():
     msg = ("Informações do computador: " "Frequência (MHz): " + str(round(psutil.cpu_freq().current, 2)) 
@@ -94,17 +96,19 @@ def mostra_informacoes():
     return msg
 
 def processos():
-  for i in psutil.pids():
-    p = psutil.Process(i)
-    conn = p.connections()
-    if len(conn) > 0:
-        if conn[0].status.ljust(13) != "ESTABLISHED  ":
-          endl = conn[0].laddr.ip.ljust(11)
-          portl = str(conn[0].laddr.port).ljust(5)
-          endr = conn[0].laddr.ip.ljust(13)
-          portr = str(conn[0].laddr.port).ljust(5)
-        print(str(i).ljust(5)," End.  Tipo   Status        Endereço    Local   Porta L.        Endereço Remoto  Porta R.")
-        print("      ", obtem_nome_familia(conn[0].family), " " + obtem_tipo_socket(conn[0].type), "   " + conn[0].status.ljust(13), endl , portl, "  " + endr, "  " +portr)
+    for i in psutil.pids():
+        p = psutil.Process(i)
+        conn = p.connections()
+        if len(conn) > 0:
+            if conn[0].status.ljust(13) != "ESTABLISHED  ":
+                endl = conn[0].laddr.ip.ljust(11)
+                portl = str(conn[0].laddr.port).ljust(5)
+                endr = conn[0].laddr.ip.ljust(13)
+                portr = str(conn[0].laddr.port).ljust(5)
+                exemplo = str(i).ljust(5)," End.  Tipo   Status        Endereço    Local   Porta L.        Endereço Remoto  Porta R."
+                exemplo2 = "      ", str(obtem_nome_familia(conn[0].family)), " " + str(obtem_tipo_socket(conn[0].type)), "   " + str(conn[0].status.ljust(13)), str(endl) , str(portl), "  " + str(endr), "  " + str(portr)
+
+    return exemplo, exemplo2
 
 host = socket.gethostname()
 porta = 9999
@@ -130,10 +134,16 @@ while True:
         # + print("Informações gerais : " + str(info_cpu))
         # + "\n\n" + str(diretorio()) + "\n\n\n" + str(mostra_informacoes()) + "\n\n\n" + str(processos())  + "\n\n\n" + str(interfaces())
     elif 'Informacoes diretorios?' in msg.decode('utf-8'): 
-        msg = mostra_informacoes()
+        msg = diretorio()
+        print(msg)
+    elif 'Informacoes processos?' in msg.decode('utf-8'): 
+        msg = processos()
+        print(msg)
+    elif 'Informacoes rede?' in msg.decode('utf-8'): 
+        msg = interfaces()
         print(msg)
     else:
-        msg = "Ok... " + msg.decode('utf-8') 
+        msg = "O que quer dizer com isso? ---> " + msg.decode('utf-8') 
     socket_cliente.send(msg.encode('utf-8'))
     
 socket_servidor.close()
