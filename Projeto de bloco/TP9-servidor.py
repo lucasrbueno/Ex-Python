@@ -107,7 +107,9 @@ def diretorio():
             if item not in [".git", ".vscode"]:        
                 lista_diretorios.append(item)
 
-    msg = (lista_diretorios), (lista_arquivos)
+    lista_diretorios.extend(lista_arquivos)
+    msg = lista_diretorios
+    
 
     # print("LISTA DE DIRETÓRIOS:\n" + *lista_diretorios, sep=" \n")
     # print("\nLISTA DE ARQUIVOS:\n" + *lista_arquivos, sep=" \n")
@@ -155,16 +157,16 @@ while True:
         msg = str(processos())
         print(msg)
         socket_cliente.send(msg.encode('utf-8'))
-    elif '3' in msg.decode('utf-8', 'ignore'): 
+    elif '3' in msg.decode('utf-8'): 
         msg = pickle.dumps(diretorio())
         socket_cliente.send(msg)
-        print(msg)
+        print(diretorio())
     elif '4' in msg.decode('utf-8'): 
         msg = "zz"
+        socket_cliente.send(msg.encode('utf-8'))
         print(msg)
     else:
         msg = "O que quer dizer com isso? ---> " + msg.decode('utf-8') 
-    
 
 scheduler.run()    
 socket_servidor.close()
