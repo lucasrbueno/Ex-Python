@@ -7,6 +7,7 @@ import cpuinfo
 import time
 import sched
 import socket
+import pickle
 
 socket_servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 disco = psutil.disk_usage('.')
@@ -27,18 +28,18 @@ def processos_rede():
         str("      ", obtem_nome_familia(conn[0].family)), " " + obtem_tipo_socket(conn[0].type), "   " + conn[0].status.ljust(13), endl , portl, "  " + endr, "  " + portr
 
 def print_event(name):
-    return 'EVENTO:', time.ctime(), name, interfaces()
+    return 'EVENTO:', time.ctime(), name
     
 
 def print_event2(name):
-    return 'EVENTO:', time.ctime(), name
+    return 'EVENTO:', time.ctime(), name, diretorio()
 
 def execucao_evento():
     msg = ("----------------------------------------------------\n" 
-    + 'INICIO:', time.ctime() 
-    + str(scheduler.enter(2, 1, print_event, ('primeira chamada',))) 
-    + str(scheduler.enter(8, 1, print_event2, ('segunda chamada',)))
-    + '\nCHAMADAS ESCALONADAS DA FUNÇÃO:\n', time.ctime()
+    + 'INICIO: \n'
+    + str(scheduler.enter(2, 1, print_event, ('primeira chamada',))) + "\n"
+    + str(scheduler.enter(8, 1, print_event2, ('segunda chamada',))) + "\n"
+    + '\nCHAMADAS ESCALONADAS DA FUNÇÃO:\n'
     + "----------------------------------------------------\n")
     return msg
 
@@ -106,11 +107,11 @@ def diretorio():
             if item not in [".git", ".vscode"]:        
                 lista_diretorios.append(item)
 
-    msg = ("LISTA DE DIRETÓRIOS\n", str(*lista_diretorios))
-    # print(*lista_diretorios, sep=" \n")
-    msg2 = ("LISTA DE ARQUIVOS\n", str(*lista_arquivos))
-    # print(*lista_arquivos, sep=" \n")
-    return msg, msg2
+    msg = (lista_diretorios), (lista_arquivos)
+
+    # print("LISTA DE DIRETÓRIOS:\n" + *lista_diretorios, sep=" \n")
+    # print("\nLISTA DE ARQUIVOS:\n" + *lista_arquivos, sep=" \n")
+    return msg
 
 def mostra_informacoes():
     msg = ("Informações do computador: " "Frequência (MHz): " + str(round(psutil.cpu_freq().current, 2)) 
@@ -140,29 +141,30 @@ print("Servidor de nome", host, "esperando conexão na porta", porta)
 print("Conectado a:", str(addr))
 
 while True:
-    msg = socket_cliente.recv(15360)
+    msg = socket_cliente.recv(15360000)
 
     if '$' == msg.decode('utf-8'): 
         print("Fechando conexao com", str(addr), "...")
         socket_cliente.close()
         break
-    elif 'Informacoes pc?' in msg.decode('utf-8'): 
+    elif '1' in msg.decode('utf-8'): 
         msg = mostra_informacoes()
         print(msg)
-        # + print("Informações gerais : " + str(info_cpu))
-        # + "\n\n" + str(diretorio()) + "\n\n\n" + str(mostra_informacoes()) + "\n\n\n" + str(processos())  + "\n\n\n" + str(interfaces())
-    elif 'Informacoes diretorios?' in msg.decode('utf-8'): 
-        msg = diretorio()
-        print(msg)
-    elif 'Informacoes processos?' in msg.decode('utf-8'): 
+        socket_cliente.send(msg.encode('utf-8'))
+    elif '2' in msg.decode('utf-8'): 
         msg = str(processos())
         print(msg)
-    elif 'Informacoes rede?' in msg.decode('utf-8'): 
-        msg = execucao_evento()
+        socket_cliente.send(msg.encode('utf-8'))
+    elif '3' in msg.decode('utf-8', 'ignore'): 
+        msg = pickle.dumps(diretorio())
+        socket_cliente.send(msg)
+        print(msg)
+    elif '4' in msg.decode('utf-8'): 
+        msg = "zz"
         print(msg)
     else:
         msg = "O que quer dizer com isso? ---> " + msg.decode('utf-8') 
-    socket_cliente.send(msg.encode('utf-8'))
+    
 
 scheduler.run()    
 socket_servidor.close()
