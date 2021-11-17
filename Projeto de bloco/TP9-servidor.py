@@ -32,15 +32,19 @@ def print_event(name):
     
 
 def print_event2(name):
-    return 'EVENTO:', time.ctime(), name, diretorio()
+    return 'EVENTO:', time.ctime(), name
+
+# def execucao_evento():
+#     msg = ("----------------------------------------------------\n" 
+#     + 'INICIO: \n'
+#     + str(scheduler.enter(2, 1, print_event, interfaces())) + "\n"
+#     + str(scheduler.enter(8, 1, print_event2, processos_rede())) + "\n"
+#     + '\nCHAMADAS ESCALONADAS DA FUNÇÃO:\n'
+#     + "----------------------------------------------------\n")
+#     return msg
 
 def execucao_evento():
-    msg = ("----------------------------------------------------\n" 
-    + 'INICIO: \n'
-    + str(scheduler.enter(2, 1, print_event, ('primeira chamada',))) + "\n"
-    + str(scheduler.enter(8, 1, print_event2, ('segunda chamada',))) + "\n"
-    + '\nCHAMADAS ESCALONADAS DA FUNÇÃO:\n'
-    + "----------------------------------------------------\n")
+    msg = scheduler.enter(2, 1, print_event, ('primeira chamada',)), scheduler.enter(8, 1, print_event2, ('segunda chamada',))
     return msg
 
 def obtem_nome_familia(familia):
@@ -162,9 +166,9 @@ while True:
         socket_cliente.send(msg)
         print(diretorio())
     elif '4' in msg.decode('utf-8'): 
-        msg = "zz"
-        socket_cliente.send(msg.encode('utf-8'))
-        print(msg)
+        msg = pickle.dumps(execucao_evento())
+        socket_cliente.send(msg)
+        print(execucao_evento())
     else:
         msg = "O que quer dizer com isso? ---> " + msg.decode('utf-8') 
 
