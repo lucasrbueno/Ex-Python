@@ -24,27 +24,23 @@ def processos_rede():
             portl = str(conn[0].laddr.port).ljust(5)
             endr = conn[0].laddr.ip.ljust(13)
             portr = str(conn[0].laddr.port).ljust(5)
-        str(i).ljust(5)," End.  Tipo   Status        Endereço    Local   Porta L.        Endereço Remoto  Porta R."
-        str("      ", obtem_nome_familia(conn[0].family)), " " + obtem_tipo_socket(conn[0].type), "   " + conn[0].status.ljust(13), endl , portl, "  " + endr, "  " + portr
+        return str(i).ljust(5)," End.  Tipo   Status        Endereço    Local   Porta L.        Endereço Remoto  Porta R. \n" + str("      ", obtem_nome_familia(conn[0].family)), " " + obtem_tipo_socket(conn[0].type), "   " + conn[0].status.ljust(13), endl , portl, "  " + endr, "  " + portr
 
-def print_event(name):
-    return 'EVENTO:', time.ctime(), name
+def print_event():
+    return 'EVENTO: ' + str(time.ctime()) 
+    # + str(name)
     
-
-def print_event2(name):
-    return 'EVENTO:', time.ctime(), name
-
-# def execucao_evento():
-#     msg = ("----------------------------------------------------\n" 
-#     + 'INICIO: \n'
-#     + str(scheduler.enter(2, 1, print_event, interfaces())) + "\n"
-#     + str(scheduler.enter(8, 1, print_event2, processos_rede())) + "\n"
-#     + '\nCHAMADAS ESCALONADAS DA FUNÇÃO:\n'
-#     + "----------------------------------------------------\n")
-#     return msg
+def print_event2():
+    return 'EVENTO 2: ' + str(time.ctime()) 
+    # + str(name)
 
 def execucao_evento():
-    msg = scheduler.enter(2, 1, print_event, ('primeira chamada',)), scheduler.enter(8, 1, print_event2, ('segunda chamada',))
+    msg = ("----------------------------------------------------\n" 
+    + 'INICIO: \n'
+    + str(scheduler.enter(2, 1, print_event, interfaces())) + "\n"
+    + str(scheduler.enter(8, 1, print_event2, processos_rede())) + "\n"
+    + '\nCHAMADAS ESCALONADAS DA FUNÇÃO:\n'
+    + "----------------------------------------------------\n")
     return msg
 
 def obtem_nome_familia(familia):
@@ -166,9 +162,9 @@ while True:
         socket_cliente.send(msg)
         print(diretorio())
     elif '4' in msg.decode('utf-8'): 
-        msg = pickle.dumps(execucao_evento())
-        socket_cliente.send(msg)
-        print(execucao_evento())
+        msg = str(execucao_evento())
+        print(msg)
+        socket_cliente.send(msg.encode('utf-8'))
     else:
         msg = "O que quer dizer com isso? ---> " + msg.decode('utf-8') 
 
