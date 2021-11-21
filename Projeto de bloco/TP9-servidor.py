@@ -1,7 +1,5 @@
 import os
-import subprocess
 import platform
-import nmap
 import psutil
 import cpuinfo
 import time
@@ -14,7 +12,7 @@ disco = psutil.disk_usage('.')
 info_cpu = cpuinfo.get_cpu_info()
 scheduler = sched.scheduler(time.time, time.sleep)
 
-def processos_rede():
+def processos_rede(list):
     for i in psutil.pids():
         p = psutil.Process(i)
         conn = p.connections()
@@ -24,24 +22,21 @@ def processos_rede():
             portl = str(conn[0].laddr.port).ljust(5)
             endr = conn[0].laddr.ip.ljust(13)
             portr = str(conn[0].laddr.port).ljust(5)
-        return str(i).ljust(5)," End.  Tipo   Status        Endereço    Local   Porta L.        Endereço Remoto  Porta R. \n" + str("      ", obtem_nome_familia(conn[0].family)), " " + obtem_tipo_socket(conn[0].type), "   " + conn[0].status.ljust(13), endl , portl, "  " + endr, "  " + portr
+        list.append(str(i).ljust(5)," End.  Tipo   Status        Endereço    Local   Porta L.        Endereço Remoto  Porta R. \n" + str("      ", obtem_nome_familia(conn[0].family)), " " + obtem_tipo_socket(conn[0].type), "   " + conn[0].status.ljust(13), endl , portl, "  " + endr, "  " + portr)
 
 def print_event():
     return 'EVENTO: ' + str(time.ctime()) 
-    # + str(name)
     
 def print_event2():
     return 'EVENTO 2: ' + str(time.ctime()) 
-    # + str(name)
 
 def execucao_evento():
-    msg = ("----------------------------------------------------\n" 
-    + 'INICIO: \n'
-    + str(scheduler.enter(2, 1, print_event, interfaces())) + "\n"
-    + str(scheduler.enter(8, 1, print_event2, processos_rede())) + "\n"
-    + '\nCHAMADAS ESCALONADAS DA FUNÇÃO:\n'
-    + "----------------------------------------------------\n")
-    return msg
+    list = []
+    scheduler.enter(2, 1, print_event, interfaces(list))
+    scheduler.enter(8, 2, print_event2, processos_rede(list))
+    for i in list:
+        print(i)
+    return list
 
 def obtem_nome_familia(familia):
   if familia == socket.AF_INET:
@@ -63,7 +58,7 @@ def obtem_tipo_socket(tipo):
   else:
     return("-")
 
-def interfaces():
+def interfaces(list):
     interfaces = psutil.net_if_addrs()
     io_status = psutil.net_io_counters(pernic=True)
     status = psutil.net_if_stats()
@@ -78,6 +73,7 @@ def interfaces():
         for j in interfaces[i]:
             print("\t"+str(j))
         print("\t"+str(status[i]))
+        list.append(i+":"+"\n"+"\t"+str(status[i]))
         print("-----------------------------------------------------------------------------------------------------------------------------------")
 
     nomes = []
@@ -87,12 +83,14 @@ def interfaces():
     for j in nomes:
         print(j)
         print("\t"+str(io_status[j]))
+        list.append(j+":"+"\n"+"\t"+str(io_status[j]))
     for i in range(4):
         time.sleep(1)
         io_status = psutil.net_io_counters(pernic=True)
         for j in nomes:
             print(j)
             print("\t"+str(io_status[j]))
+            list.append(j+":"+"\n"+"\t"+str(io_status[j]))
 
 def diretorio():
     pasta_atual = os.listdir()
@@ -109,10 +107,7 @@ def diretorio():
 
     lista_diretorios.extend(lista_arquivos)
     msg = lista_diretorios
-    
 
-    # print("LISTA DE DIRETÓRIOS:\n" + *lista_diretorios, sep=" \n")
-    # print("\nLISTA DE ARQUIVOS:\n" + *lista_arquivos, sep=" \n")
     return msg
 
 def mostra_informacoes():
@@ -162,12 +157,12 @@ while True:
         socket_cliente.send(msg)
         print(diretorio())
     elif '4' in msg.decode('utf-8'): 
-        msg = str(execucao_evento())
+        msg = execucao_evento()
         print(msg)
-        socket_cliente.send(msg.encode('utf-8'))
+        socket_cliente.send(pickle.dumps(msg))
     else:
         msg = "O que quer dizer com isso? ---> " + msg.decode('utf-8') 
 
 scheduler.run()    
 socket_servidor.close()
-input("Pressione qualquer tecla para sair...") 
+input("Pressione qualquer tecla para sair...")
