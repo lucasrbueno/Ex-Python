@@ -1,0 +1,3 @@
+Arquivo: b.txt, Espaco ocupado: 30 bytes 
+Arquivo: a.txt, Espaco ocupado: 22 bytes 
+Arquivo: totals.txt, Espaco ocupado: 0 bytes 
