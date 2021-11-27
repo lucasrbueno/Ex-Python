@@ -1,7 +1,7 @@
 import os
 
 # C:\\Users\\Lucas\\Desktop\\Exercicios-Python\\
-diretorio = input("Qual diretório deseja obter os arquivos? ")
+diretorio = input("De qual diretório deseja obter os arquivos? ")
 
 arquivos = []
 tamanho = []
@@ -11,18 +11,17 @@ for item in os.listdir(diretorio):
     if os.path.isfile(item):
         arquivos.append(item)
         tamanho.append(os.stat(item).st_size)
-
-tamanho.sort(reverse=True)
+        tamanho.sort(reverse=True)
 
 for item in tamanho:
     for jtem in arquivos:
         if os.stat(jtem).st_size == item:
             descrescente.append(jtem)
 
-def criar_txt(arquivo):
+def criar_txt(descrescente):
     txt = open('lista de arquivos.txt', 'w')
 
-    for item in arquivo:
+    for item in descrescente:
         txt.write("Arquivo: " + str(item) + ", Espaco ocupado: " + str(os.stat(str(item)).st_size) + " bytes \n")            
 
 criar_txt(descrescente)
