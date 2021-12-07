@@ -17,7 +17,7 @@ s.send(msg1.encode('utf-8'))
 
 while msg1 != '$':
     msg = s.recv(15360000)
-    if (msg1 == "1"):
+    if msg1 == '1':
         lista = pickle.loads(msg)
         for i in lista:
             print(i)
