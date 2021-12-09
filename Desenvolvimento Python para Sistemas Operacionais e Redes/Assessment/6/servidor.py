@@ -1,7 +1,4 @@
-import os
-import socket
-import pickle
-
+import socket, os, pickle
 socket_servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def diretorio():

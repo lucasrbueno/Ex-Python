@@ -1,18 +1,19 @@
-arquivoA_arquivo = []
-arquivoA_arquivo.append(open("a.txt", "r").readlines())
-arquivoA_arquivo.append(open("b.txt", "r").readlines())
+lista_arquivo = []
+lista_arquivo.append(open("a.txt", "r").readlines())
+lista_arquivo.append(open("b.txt", "r").readlines())
 
 arquivoA = []
 arquivoB = []
 
-for item in range(len(arquivoA_arquivo)):
+for item in range(len(lista_arquivo)):
   if item == 0:
-    for jtem in arquivoA_arquivo[item]:
+    for jtem in lista_arquivo[item]:
       arquivoA = jtem.split(' ')
   elif item == 1:
-    for jtem in arquivoA_arquivo[item]:
+    for jtem in lista_arquivo[item]:
       arquivoB = jtem.split(' ')
-arquivoA_arquivo.clear()
+
+lista_arquivo.clear()
 
 def lista_maior_menor(arquivoA, arquivoB):
   if len(arquivoA) > len(arquivoB):
@@ -31,28 +32,12 @@ def lista_maior_menor(arquivoA, arquivoB):
 arquivoA, arquivoB = lista_maior_menor(arquivoA, arquivoB)
 
 def somados(arquivoA, arquivoB):
-  for i in range(len(arquivoA)):
-      print(arquivoA[i], " + ", arquivoB[i], " = ", int(arquivoA[i]) + int(arquivoB[i]))
+  for item in range(len(arquivoA)):
+    print(arquivoA[item], " + ", arquivoB[item], " = ", int(arquivoA[item]) + int(arquivoB[item]))
 
 somados(arquivoA, arquivoB)
 
-
-  
-
-# arquivoB = arquivoA_arquivo[1].ReadLines()
-# arquivoA.split(' '), arquivoB.split(' ')
-
 # file_generators = [read_file(path) for path in arquivoA_arquivo]
-
-
-
-# print(lista_maior_menorA(arquivoA_arquivo))
-
-
-
-
-
-
 
 # with open("totals.txt", "w+") as outFile:
 #   while True:
