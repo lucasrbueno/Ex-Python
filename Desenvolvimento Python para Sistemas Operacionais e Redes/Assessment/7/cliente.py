@@ -9,11 +9,14 @@ requisicao = 1
 
 while requisicao <= 5:
     socket_cliente.sendto(msg.encode('utf-8'), cliente)
-    try:
-        msg_conteudo, servidor = socket_cliente.recvfrom(15360000)
-        print(msg_conteudo.decode('utf-8'))
-        break
-    except socket.timeout:
-        requisicao = requisicao + 1
+    reconhecido = False
+    while not reconhecido:
+        try:
+            msg_conteudo, servidor = socket_cliente.recvfrom(15360000)
+            reconhecido = True
+            print(msg_conteudo.decode('utf-8'))         
+        except socket.timeout:
+            requisicao = requisicao + 1
+    break
 
 socket_cliente.close()
